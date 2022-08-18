@@ -18,7 +18,14 @@ displayItems = canapes => {
     canapes.forEach(canapes => {
         const itemElement = document.createElement('a');
         itemElement.setAttribute('href', '../html/product.html?id=' + canapes._id);
-        itemElement.innerHTML = '<article><h3>' + canapes.name + '</h3><img src="' + canapes.imageUrl + '" alt="' + canapes.altTxt + '"></br><p>' + canapes.description + '</p></article>';
+        const itemArticle = itemElement.appendChild(document.createElement('article'));
+        const itemHeading = itemArticle.appendChild(document.createElement('h3'));
+        itemHeading.innerHTML = canapes.name;
+        const itemImg = itemArticle.appendChild(document.createElement('img'));
+        itemImg.setAttribute('src', canapes.imageUrl);
+        itemImg.setAttribute('alt', canapes.altTxt);
+        const itemDesc = itemArticle.appendChild(document.createElement('p'));
+        itemDesc.innerHTML = canapes.description;
         itemsDiv.append(itemElement);
     });
 }
