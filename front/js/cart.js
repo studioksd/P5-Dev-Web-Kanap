@@ -35,17 +35,21 @@ function getProduct(cartObjJSON) {
             canapes.itemColor = cartObjJSON.itemColor;
             canapes.itemQuantity = cartObjJSON.itemQuantity;
             displayCartItems(canapes);
-            addEvent();
+            addClickEvent();
+            addChangeEvent();
+            total();
         })
 }
 
+
 displayCartItems = canapes => {
     let cartItemsDiv = document.getElementById('cart__items');
+    // cartItemsDiv.innerText = '';
 
     const cartItem = cartItemsDiv.appendChild(document.createElement('article'));
-    cartItem.setAttribute('class', 'cart__item')
-    cartItem.setAttribute('data-id', canapes.itemID)
-    cartItem.setAttribute('data-color', canapes.itemColor)
+    cartItem.setAttribute('class', 'cart__item');
+    cartItem.setAttribute('data-id', canapes.itemID);
+    cartItem.setAttribute('data-color', canapes.itemColor);
 
     const cartItemImgDiv = cartItem.appendChild(document.createElement('div'));
     cartItemImgDiv.setAttribute('class', 'cart__item__img')
@@ -61,13 +65,14 @@ displayCartItems = canapes => {
     cartItemDesc.setAttribute('class', 'cart__item__content__description');
 
     const cartItemName = cartItemDesc.appendChild(document.createElement('h2'));
-    cartItemName.innerHTML = canapes.name;
+    cartItemName.innerText = canapes.name;
 
     const cartItemColor = cartItemDesc.appendChild(document.createElement('p'));
-    cartItemColor.innerHTML = canapes.itemColor;
+    cartItemColor.innerText = canapes.itemColor;
 
     const cartItemPrice = cartItemDesc.appendChild(document.createElement('p'));
-    cartItemPrice.innerHTML = canapes.price;
+    cartItemPrice.classList.add('price');
+    cartItemPrice.innerText = canapes.price;
 
     const cartItemSettings = cartItemContent.appendChild(document.createElement('div'))
     cartItemSettings.setAttribute('class', 'cart__item__content__settings');
@@ -91,6 +96,37 @@ displayCartItems = canapes => {
     cartItemDelete.appendChild(balisep);
 }
 
+function total() {
+    let items = document.getElementsByTagName('article');
+    let itemsNumber = items.length;
+
+    let prix = document.getElementsByClassName('price');
+    let qty = document.getElementsByClassName('itemQuantity');
+
+    let totalPriceDiv = document.getElementById('totalPrice');
+    // totalPriceDiv.innerText = '';
+    let totalQuantityDiv = document.getElementById('totalQuantity');
+    // totalQuantityDiv.innerText = '';
+
+    let totalPrice = 0;
+    let totalQty = 0;
+    
+    for (i = 0; i < itemsNumber; i++) {
+        totalQty += parseInt(qty[i].value);
+        totalPrice += parseInt(prix[i].innerText) * qty[i].value;
+    } 
+
+    totalPriceDiv.innerText = totalPrice;
+    totalQuantityDiv.innerText = totalQty;
+}
+
+function addClickEvent() {
+    let deleteButton = document.querySelectorAll('.deleteItem');
+    deleteButton.forEach(function(article){
+        article.addEventListener('click', deleteItem);
+    })
+}
+
 function deleteItem(item) {
     let article = item.srcElement.closest('article');
     let id = article.dataset.id;
@@ -98,8 +134,6 @@ function deleteItem(item) {
     let listeFinaleProduit = [];
     
     let cart = JSON.parse(localStorage.getItem('products'));
-    console.log(cart)
-    console.log(!cart == '')
       if (!cart || cart == '') {
         cart = [];
       }
@@ -111,13 +145,30 @@ function deleteItem(item) {
     console.log(JSON.stringify(listeFinaleProduit))
     localStorage.setItem('products', JSON.stringify(listeFinaleProduit));
     article.remove();
+    total();
 }
 
-function addEvent() {
-    let deleteButton = document.querySelectorAll('.deleteItem');
-    console.log(deleteButton)
-    deleteButton.forEach(function(article){
-        article.addEventListener('click', deleteItem);
+function addChangeEvent() {
+    let input = document.querySelectorAll('input.itemQuantity');
+    input.forEach(function(inp){
+        inp.addEventListener('change', function(event){
+            let cart = JSON.parse(localStorage.getItem('products'));
+            let article = inp.closest('article');
+            let id = article.dataset.id;
+            let color = article.dataset.color;
+            let newCart = [];
+            console.log(cart);
+
+            cart.forEach(function(item) {
+                if (item.itemColor == color && item.itemID == id) {
+                    item.itemQuantity = parseInt(inp.value);
+                }
+                newCart.push(item);
+            });
+            console.log(newCart);
+            localStorage.setItem('products', JSON.stringify(newCart));
+            
+            total();
+        });
     })
 }
-
