@@ -11,6 +11,7 @@
 afficherPanier();
 
 function afficherPanier() {
+    console.log('afficherpanier()')
     let tableauProduit = JSON.parse(localStorage.getItem('products'));
     if (!tableauProduit || tableauProduit == '') {
     tableauProduit = [];
@@ -45,7 +46,6 @@ displayCartItems = canapes => {
     cartItem.setAttribute('class', 'cart__item')
     cartItem.setAttribute('data-id', canapes.itemID)
     cartItem.setAttribute('data-color', canapes.itemColor)
-    console.log(cartItem)
 
     const cartItemImgDiv = cartItem.appendChild(document.createElement('div'));
     cartItemImgDiv.setAttribute('class', 'cart__item__img')
@@ -91,13 +91,15 @@ displayCartItems = canapes => {
     cartItemDelete.appendChild(balisep);
 }
 
-function deleteItem(element) {
-    let article = element.closest('article');
+function deleteItem(item) {
+    let article = item.srcElement.closest('article');
     let id = article.dataset.id;
     let color = article.dataset.color;
     let listeFinaleProduit = [];
     
     let cart = JSON.parse(localStorage.getItem('products'));
+    console.log(cart)
+    console.log(!cart == '')
       if (!cart || cart == '') {
         cart = [];
       }
@@ -106,14 +108,16 @@ function deleteItem(element) {
             listeFinaleProduit.push(product);
         }
     })
+    console.log(JSON.stringify(listeFinaleProduit))
     localStorage.setItem('products', JSON.stringify(listeFinaleProduit));
     article.remove();
 }
 
 function addEvent() {
     let deleteButton = document.querySelectorAll('.deleteItem');
-    deleteButton.forEach(function(btn){
-        btn.addEventListener('click', deleteItem(btn));
+    console.log(deleteButton)
+    deleteButton.forEach(function(article){
+        article.addEventListener('click', deleteItem);
     })
 }
 

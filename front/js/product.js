@@ -88,8 +88,10 @@ function storeData() {
           produitTrouve = true;
           cartObjJSON.itemQuantity += produit.itemQuantity;
           tableauFinalProduit.push(cartObjJSON);
+          console.log(cartObjJSON + 'cartObj')
         } else {
           tableauFinalProduit.push(produit);
+          console.log(produit + 'produit')
         }
       });
       if (!produitTrouve) {
