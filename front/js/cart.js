@@ -1,6 +1,6 @@
 afficherPanier();
 
-function afficherPanier() {
+function afficherPanier() { // affiche le panier stocké dans le local storage
     let tableauProduit = JSON.parse(localStorage.getItem('products'));
     if (!tableauProduit || tableauProduit == '') {
         tableauProduit = [];
@@ -10,7 +10,7 @@ function afficherPanier() {
     });
 }
 
-function getProduct(cartObjJSON) {
+function getProduct(cartObjJSON) { // récupère les données liées aux produits du panier auprès de l'API
     fetch("http://localhost:3000/api/products/" + cartObjJSON.itemID)
         .then((response) => {
             if (response.ok) {
@@ -32,7 +32,7 @@ function getProduct(cartObjJSON) {
 }
 
 
-displayCartItems = canapes => {
+displayCartItems = canapes => { // affiche les objets du panier
     let cartItemsDiv = document.getElementById('cart__items');
 
     const cartItem = cartItemsDiv.appendChild(document.createElement('article'));
@@ -85,7 +85,7 @@ displayCartItems = canapes => {
     cartItemDelete.appendChild(balisep);
 }
 
-function total() {
+function total() { // affiche le prix et la quantité totale
     let items = document.getElementsByTagName('article');
     let itemsNumber = items.length;
 
@@ -107,14 +107,14 @@ function total() {
     totalQuantityDiv.innerText = totalQty;
 }
 
-function addClickEvent() {
+function addClickEvent() { // ajoute un évènement cliquable au bouton "supprimer"
     let deleteButton = document.querySelectorAll('.deleteItem');
     deleteButton.forEach(function (article) {
         article.addEventListener('click', deleteItem);
     })
 }
 
-function deleteItem(item) {
+function deleteItem(item) { // supprime l'article du panier lorsque l'on clique sur son bouton "supprimer"
     let article = item.srcElement.closest('article');
     let id = article.dataset.id;
     let color = article.dataset.color;
@@ -134,7 +134,7 @@ function deleteItem(item) {
     total();
 }
 
-function addChangeEvent() {
+function addChangeEvent() { // permet de modifier le panier lorsqu'il y a une modification de quantité
     let input = document.querySelectorAll('input.itemQuantity');
     input.forEach(function (inp) {
         inp.addEventListener('change', function (event) {
@@ -157,14 +157,7 @@ function addChangeEvent() {
     })
 }
 
-
-
-confirmOrder = result => {
-    console.log(result.orderId)
-    window.location.href = 'confirmation.html?id=' + result.orderId;
-}
-
-function checkForm() {
+function checkForm() { // vérifie que les champs du formulaire sont corrects avant de les envoyer au serveur
     let firstNameInp = document.getElementById('firstName');
     let lastNameInp = document.getElementById('lastName');
     let addressInp = document.getElementById('address');
@@ -236,9 +229,9 @@ function checkForm() {
     });
 }
 
-function submit() {
+function submit() { // ajoute un évènement cliquable sur le bouton 'Commander !'
     let orderBtn = document.getElementById('order');
-    orderBtn.addEventListener('click', function () {
+    orderBtn.addEventListener('click', function () { // envoie au serveur l'objet contact et l'array of strings produits afin d'obtenir un numéro de commande en réponse
         let firstNameErr = document.getElementById('firstNameErrorMsg').innerText;
         let lastNameErr = document.getElementById('lastNameErrorMsg').innerText;
         let addressErr = document.getElementById('addressErrorMsg').innerText;
@@ -285,21 +278,22 @@ function submit() {
                         }
                     })
                     .then(value => {
-                        console.log(value);
                         confirmOrder(value);
                         localStorage.clear();
                     })
                     .catch(function (err) {
                         console.log(err);
                     });
-            } else {
-                console.log('tf?');
             }
-
         } else {
             alert('Veuillez vérifier vos coordonnées');
         }
     });
+}
+
+confirmOrder = result => { // redirige vers la page de confirmation une fois la commande passée
+    console.log(result.orderId)
+    window.location.href = 'confirmation.html?id=' + result.orderId;
 }
 
 checkForm();

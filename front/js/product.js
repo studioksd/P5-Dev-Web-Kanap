@@ -2,7 +2,7 @@ var str = window.location.href;
 var url = new URL(str);
 var id = url.searchParams.get("id");
 
-function getProduct() {
+function getProduct() { // récupère le produit demandé à l'API
   fetch("http://localhost:3000/api/products/" + id)
     .then((response) => {
       if (response.ok) {
@@ -23,29 +23,29 @@ function getProduct() {
 
 getProduct();
 
-displayImg = canapes => {
+displayImg = canapes => { // affiche l'image du produit
   let itemImgDiv = document.getElementsByClassName('item__img');
   const itemImg = itemImgDiv[0].appendChild(document.createElement('img'));
   itemImg.setAttribute('src', canapes.imageUrl);
   itemImg.setAttribute('alt', canapes.altTxt);
 }
 
-displayTitle = canapes => {
+displayTitle = canapes => { // affiche le nom du produit
   let itemTitle = document.getElementById('title');
   itemTitle.innerHTML = canapes.name;
 }
 
-displayPrice = canapes => {
+displayPrice = canapes => { // affiche le prix du produit
   let itemPrice = document.getElementById('price');
   itemPrice.innerHTML = canapes.price;
 }
 
-displayDesc = canapes => {
+displayDesc = canapes => { // affiche la description du produit
   let itemDesc = document.getElementById('description');
   itemDesc.innerHTML = canapes.description;
 }
 
-displayColors = canapes => {
+displayColors = canapes => { // affiche les options de couleurs du produit
   let itemColorsDiv = document.getElementById('colors');
   for (let i = 0; i < canapes.colors.length; i++) {
     const itemColors = document.createElement('option');
@@ -62,7 +62,7 @@ for (i = 0; i < 10; i++) {
 
 document.getElementById('addToCart').onclick = function () { storeData() };
 
-function storeData() {
+function storeData() { // stocke l'id ainsi que les options de quantité et de couleur choisies dans le local storage
   let cartObjJSON = {
     itemID: id,
     itemColor: document.getElementById('colors').value,

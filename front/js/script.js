@@ -1,4 +1,4 @@
-function getProducts() {
+function getProducts() { // récupère les produits de l'API
   fetch("http://localhost:3000/api/products")
     .then((response) => {
       if (response.ok) {
@@ -13,7 +13,7 @@ function getProducts() {
     })
 }
 
-displayItems = canapes => {
+displayItems = canapes => { // affiche les produits de façon dynamique sur la page
   const itemsDiv = document.querySelector('#items')
   canapes.forEach(canapes => {
     const itemElement = document.createElement('a');
