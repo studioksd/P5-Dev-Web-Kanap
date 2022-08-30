@@ -57,7 +57,7 @@ displayColors = canapes => {
 
 var objNames = []
 for (i = 0; i < 10; i++) {
-objNames[i] = "item" + i;
+  objNames[i] = "item" + i;
 }
 
 document.getElementById('addToCart').onclick = function () { storeData() };
@@ -68,7 +68,7 @@ function storeData() {
     itemColor: document.getElementById('colors').value,
     itemQuantity: parseInt(document.getElementById('quantity').value)
   }
-  
+
   let color = document.getElementById('colors').value;
   let qty = document.getElementById('quantity').value;
   if (qty <= 0 || qty > 100) {
@@ -83,7 +83,7 @@ function storeData() {
       }
       let tableauFinalProduit = [];
       let produitTrouve = false;
-      tableauProduit.forEach(function(produit){
+      tableauProduit.forEach(function (produit) {
         if (produit.itemID == cartObjJSON.itemID && produit.itemColor == cartObjJSON.itemColor) {
           produitTrouve = true;
           cartObjJSON.itemQuantity += produit.itemQuantity;
@@ -98,7 +98,7 @@ function storeData() {
         tableauFinalProduit.push(cartObjJSON);
       }
       localStorage.setItem('products', JSON.stringify(tableauFinalProduit));
-      if (confirm('Votre produit a été ajouté au panier. Voulez vous continuer vers le panier ?')){
+      if (confirm('Votre produit a été ajouté au panier. Voulez vous continuer vers le panier ?')) {
         window.location.href = 'cart.html';
       } else {
         window.location.href = 'index.html';

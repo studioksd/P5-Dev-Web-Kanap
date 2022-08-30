@@ -1,23 +1,12 @@
-// var objNames = []
-// for (i = 0; i < localStorage.length; i++) {
-// objNames[i] = "item" + i;
-// }
-    
-// for (i in objNames) {
-// var cartObj = localStorage.getItem(objNames[i]);
-// var cartObjJSON = JSON.parse(cartObj);
-// console.log(objNames[i])
-
 afficherPanier();
 
 function afficherPanier() {
-    console.log('afficherpanier()')
     let tableauProduit = JSON.parse(localStorage.getItem('products'));
     if (!tableauProduit || tableauProduit == '') {
-    tableauProduit = [];
+        tableauProduit = [];
     }
-    tableauProduit.forEach(function(produit){
-    getProduct(produit);
+    tableauProduit.forEach(function (produit) {
+        getProduct(produit);
     });
 }
 
@@ -38,13 +27,13 @@ function getProduct(cartObjJSON) {
             addClickEvent();
             addChangeEvent();
             total();
+
         })
 }
 
 
 displayCartItems = canapes => {
     let cartItemsDiv = document.getElementById('cart__items');
-    // cartItemsDiv.innerText = '';
 
     const cartItem = cartItemsDiv.appendChild(document.createElement('article'));
     cartItem.setAttribute('class', 'cart__item');
@@ -76,16 +65,16 @@ displayCartItems = canapes => {
 
     const cartItemSettings = cartItemContent.appendChild(document.createElement('div'))
     cartItemSettings.setAttribute('class', 'cart__item__content__settings');
-    
+
     const cartItemQty = cartItemSettings.appendChild(document.createElement('div'));
     cartItemQty.setAttribute('class', 'cart__item__content__settings__quantity');
     cartItemQty.innerHTML = '<p>Qté : </p>'
     const cartItemQtyInput = cartItemQty.appendChild(document.createElement('input'));
     cartItemQtyInput.setAttribute('type', 'number');
-    cartItemQtyInput.setAttribute('class','itemQuantity');
+    cartItemQtyInput.setAttribute('class', 'itemQuantity');
     cartItemQtyInput.setAttribute('name', 'itemQuantity');
-    cartItemQtyInput.setAttribute('min','1');
-    cartItemQtyInput.setAttribute('max','100');
+    cartItemQtyInput.setAttribute('min', '1');
+    cartItemQtyInput.setAttribute('max', '100');
     cartItemQtyInput.setAttribute('value', canapes.itemQuantity);
 
     const cartItemDelete = cartItemSettings.appendChild(document.createElement('div'));
@@ -104,17 +93,15 @@ function total() {
     let qty = document.getElementsByClassName('itemQuantity');
 
     let totalPriceDiv = document.getElementById('totalPrice');
-    // totalPriceDiv.innerText = '';
     let totalQuantityDiv = document.getElementById('totalQuantity');
-    // totalQuantityDiv.innerText = '';
 
     let totalPrice = 0;
     let totalQty = 0;
-    
+
     for (i = 0; i < itemsNumber; i++) {
         totalQty += parseInt(qty[i].value);
         totalPrice += parseInt(prix[i].innerText) * qty[i].value;
-    } 
+    }
 
     totalPriceDiv.innerText = totalPrice;
     totalQuantityDiv.innerText = totalQty;
@@ -122,7 +109,7 @@ function total() {
 
 function addClickEvent() {
     let deleteButton = document.querySelectorAll('.deleteItem');
-    deleteButton.forEach(function(article){
+    deleteButton.forEach(function (article) {
         article.addEventListener('click', deleteItem);
     })
 }
@@ -132,17 +119,16 @@ function deleteItem(item) {
     let id = article.dataset.id;
     let color = article.dataset.color;
     let listeFinaleProduit = [];
-    
+
     let cart = JSON.parse(localStorage.getItem('products'));
-      if (!cart || cart == '') {
+    if (!cart || cart == '') {
         cart = [];
-      }
-    cart.forEach(function(product){
+    }
+    cart.forEach(function (product) {
         if (!(product.itemID == id && product.itemColor == color)) {
             listeFinaleProduit.push(product);
         }
     })
-    console.log(JSON.stringify(listeFinaleProduit))
     localStorage.setItem('products', JSON.stringify(listeFinaleProduit));
     article.remove();
     total();
@@ -150,25 +136,171 @@ function deleteItem(item) {
 
 function addChangeEvent() {
     let input = document.querySelectorAll('input.itemQuantity');
-    input.forEach(function(inp){
-        inp.addEventListener('change', function(event){
+    input.forEach(function (inp) {
+        inp.addEventListener('change', function (event) {
             let cart = JSON.parse(localStorage.getItem('products'));
             let article = inp.closest('article');
             let id = article.dataset.id;
             let color = article.dataset.color;
             let newCart = [];
-            console.log(cart);
 
-            cart.forEach(function(item) {
+            cart.forEach(function (item) {
                 if (item.itemColor == color && item.itemID == id) {
                     item.itemQuantity = parseInt(inp.value);
                 }
                 newCart.push(item);
             });
-            console.log(newCart);
             localStorage.setItem('products', JSON.stringify(newCart));
-            
+
             total();
         });
     })
 }
+
+
+
+confirmOrder = result => {
+    console.log(result.orderId)
+    window.location.href = 'confirmation.html?id=' + result.orderId;
+}
+
+function checkForm() {
+    let firstNameInp = document.getElementById('firstName');
+    let lastNameInp = document.getElementById('lastName');
+    let addressInp = document.getElementById('address');
+    let cityInp = document.getElementById('city');
+    let emailInp = document.getElementById('email');
+
+    let nameRGEX = /^([a-zA-Z\s]{1,})$/;
+    let addressRGEX = /^(\d{1,5}) ([a-zA-Z\s]{1,})$/;
+    let emailRGEX = /^[a-zA-Z0–9+_.-]+@[a-zA-Z0–9.-]+$/;
+
+    firstNameInp.addEventListener('change', function () {
+        let firstNameErr = document.getElementById('firstNameErrorMsg');
+        let firstName = document.getElementById('firstName').value;
+        let firstNameResult = nameRGEX.test(firstName);
+        if (firstNameResult == false) {
+            firstNameErr.innerText = 'Veuillez entrer un prénom valide';
+            return false;
+        } else {
+            firstNameErr.innerText = '';
+        }
+    });
+
+    lastNameInp.addEventListener('change', function () {
+        let lastNameErr = document.getElementById('lastNameErrorMsg');
+        let lastName = document.getElementById('lastName').value;
+        let lastNameResult = nameRGEX.test(lastName);
+        if (lastNameResult == false) {
+            lastNameErr.innerText = 'Veuillez entrer un nom valide';
+            return false;
+        } else {
+            lastNameErr.innerText = '';
+        }
+    });
+
+    addressInp.addEventListener('change', function () {
+        let addressErr = document.getElementById('addressErrorMsg');
+        let address = document.getElementById('address').value;
+        let addressResult = addressRGEX.test(address);
+        if (addressResult == false) {
+            addressErr.innerText = 'Veuillez entrer une adresse valide';
+            return false;
+        } else {
+            addressErr.innerText = '';
+        }
+    });
+
+    cityInp.addEventListener('change', function () {
+        let cityErr = document.getElementById('cityErrorMsg');
+        let city = document.getElementById('city').value;
+        let cityResult = nameRGEX.test(city);
+        if (cityResult == false) {
+            cityErr.innerText = 'Veuillez entrer une ville valide';
+            return false;
+        } else {
+            cityErr.innerText = '';
+        }
+    });
+
+    emailInp.addEventListener('change', function () {
+        let emailErr = document.getElementById('emailErrorMsg');
+        let email = document.getElementById('email').value;
+        let emailResult = emailRGEX.test(email);
+        if (emailResult == false) {
+            emailErr.innerText = 'Veuillez entrer un email valide';
+            return false;
+        } else {
+            emailErr.innerText = '';
+        }
+    });
+}
+
+function submit() {
+    let orderBtn = document.getElementById('order');
+    orderBtn.addEventListener('click', function () {
+        let firstNameErr = document.getElementById('firstNameErrorMsg').innerText;
+        let lastNameErr = document.getElementById('lastNameErrorMsg').innerText;
+        let addressErr = document.getElementById('addressErrorMsg').innerText;
+        let cityErr = document.getElementById('cityErrorMsg').innerText;
+        let emailErr = document.getElementById('emailErrorMsg').innerText;
+
+        console.log(firstNameErr == '' && lastNameErr == '');
+
+        if (firstNameErr == '' && lastNameErr == '' && addressErr == '' && cityErr == '' && emailErr == '') {
+            let contact = {
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                city: city,
+                email: email
+            };
+
+            let finalProducts = JSON.parse(localStorage.getItem('products'));
+            let productsID = [];
+
+            for (i = 0; i < finalProducts.length; i++) {
+                productsID[i] = finalProducts[i].itemID;
+            }
+
+            let POSTparams = {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contact: contact,
+                    products: productsID
+                })
+            }
+
+            if (typeof contact == 'object' && typeof productsID == 'object') {
+                fetch('http://localhost:3000/api/products/order', POSTparams)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("NETWORK RESPONSE ERROR");
+                        }
+                    })
+                    .then(value => {
+                        console.log(value);
+                        confirmOrder(value);
+                        localStorage.clear();
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+            } else {
+                console.log('tf?');
+            }
+
+        } else {
+            alert('Veuillez vérifier vos coordonnées');
+        }
+    });
+}
+
+checkForm();
+submit();
