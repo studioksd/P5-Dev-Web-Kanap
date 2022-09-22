@@ -144,21 +144,21 @@ function addChangeEvent() { // permet de modifier le panier lorsqu'il y a une mo
             let id = article.dataset.id;
             let color = article.dataset.color;
             let newCart = [];
-            
+
             let qty = parseInt(inp.value);
             if (qty <= 0 || qty > 100) {
                 alert('Quantité invalide')
             } else {
-            cart.forEach(function (item) {
-                if (item.itemColor == color && item.itemID == id) {
-                    item.itemQuantity = qty;
-                }
-                newCart.push(item);
-            });
-            localStorage.setItem('products', JSON.stringify(newCart));
+                cart.forEach(function (item) {
+                    if (item.itemColor == color && item.itemID == id) {
+                        item.itemQuantity = qty;
+                    }
+                    newCart.push(item);
+                });
+                localStorage.setItem('products', JSON.stringify(newCart));
 
-            total();
-        }
+                total();
+            }
         });
     })
 }
@@ -249,57 +249,57 @@ function submit() { // ajoute un évènement cliquable sur le bouton 'Commander 
         if (cart = []) {
             alert('Votre panier est vide.')
         } else {
-            
-        
-        if (firstNameErr == '' && lastNameErr == '' && addressErr == '' && cityErr == '' && emailErr == '') {
-            let contact = {
-                firstName: firstName,
-                lastName: lastName,
-                address: address,
-                city: city,
-                email: email
-            };
 
-            let finalProducts = JSON.parse(localStorage.getItem('products'));
-            let productsID = [];
 
-            for (i = 0; i < finalProducts.length; i++) {
-                productsID[i] = finalProducts[i].itemID;
-            }
+            if (firstNameErr == '' && lastNameErr == '' && addressErr == '' && cityErr == '' && emailErr == '') {
+                let contact = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    address: address,
+                    city: city,
+                    email: email
+                };
 
-            let POSTparams = {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    contact: contact,
-                    products: productsID
-                })
-            }
+                let finalProducts = JSON.parse(localStorage.getItem('products'));
+                let productsID = [];
 
-            if (typeof contact == 'object' && typeof productsID == 'object') {
-                fetch('http://localhost:3000/api/products/order', POSTparams)
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error("NETWORK RESPONSE ERROR");
-                        }
+                for (i = 0; i < finalProducts.length; i++) {
+                    productsID[i] = finalProducts[i].itemID;
+                }
+
+                let POSTparams = {
+                    method: 'post',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contact: contact,
+                        products: productsID
                     })
-                    .then(value => {
-                        confirmOrder(value);
-                        localStorage.clear();
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
+                }
+
+                if (typeof contact == 'object' && typeof productsID == 'object') {
+                    fetch('http://localhost:3000/api/products/order', POSTparams)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error("NETWORK RESPONSE ERROR");
+                            }
+                        })
+                        .then(value => {
+                            confirmOrder(value);
+                            localStorage.clear();
+                        })
+                        .catch(function (err) {
+                            console.log(err);
+                        });
+                }
+            } else {
+                alert('Veuillez vérifier vos coordonnées');
             }
-        } else {
-            alert('Veuillez vérifier vos coordonnées');
         }
-    }
     });
 }
 
