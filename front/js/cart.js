@@ -132,6 +132,7 @@ function deleteItem(item) { // supprime l'article du panier lorsque l'on clique 
     localStorage.setItem('products', JSON.stringify(listeFinaleProduit));
     article.remove();
     total();
+    window.location.reload();
 }
 
 function addChangeEvent() { // permet de modifier le panier lorsqu'il y a une modification de quantité
@@ -143,16 +144,21 @@ function addChangeEvent() { // permet de modifier le panier lorsqu'il y a une mo
             let id = article.dataset.id;
             let color = article.dataset.color;
             let newCart = [];
-
+            
+            let qty = parseInt(inp.value);
+            if (qty <= 0 || qty > 100) {
+                alert('Quantité invalide')
+            } else {
             cart.forEach(function (item) {
                 if (item.itemColor == color && item.itemID == id) {
-                    item.itemQuantity = parseInt(inp.value);
+                    item.itemQuantity = qty;
                 }
                 newCart.push(item);
             });
             localStorage.setItem('products', JSON.stringify(newCart));
 
             total();
+        }
         });
     })
 }
@@ -164,7 +170,7 @@ function checkForm() { // vérifie que les champs du formulaire sont corrects av
     let cityInp = document.getElementById('city');
     let emailInp = document.getElementById('email');
 
-    let nameRGEX = /^([a-zA-Z\s]{1,})$/;
+    let nameRGEX = /^[a-zA-Z]+[ -][a-zA-Z]+$/;
     let addressRGEX = /^(\d{1,5}) ([a-zA-Z\s]{1,})$/;
     let emailRGEX = /^[a-zA-Z0–9+_.-]+@[a-zA-Z0–9.-]+$/;
 
@@ -238,8 +244,13 @@ function submit() { // ajoute un évènement cliquable sur le bouton 'Commander 
         let cityErr = document.getElementById('cityErrorMsg').innerText;
         let emailErr = document.getElementById('emailErrorMsg').innerText;
 
-        console.log(firstNameErr == '' && lastNameErr == '');
+        let cart = JSON.parse(localStorage.getItem('products'));
 
+        if (cart = []) {
+            alert('Votre panier est vide.')
+        } else {
+            
+        
         if (firstNameErr == '' && lastNameErr == '' && addressErr == '' && cityErr == '' && emailErr == '') {
             let contact = {
                 firstName: firstName,
@@ -288,6 +299,7 @@ function submit() { // ajoute un évènement cliquable sur le bouton 'Commander 
         } else {
             alert('Veuillez vérifier vos coordonnées');
         }
+    }
     });
 }
 
